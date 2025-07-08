@@ -2,10 +2,17 @@ from datetime import datetime
 orders = []
 
 class ShippingService:
-    def __init__(self):
-        pass
     def shipmentNotice(self,prods):
-        pass
+        print("** Shipment Notice **")
+        total = 0
+        for item,q in prods.items():
+            name = item.getName()
+            quantity = q[0]
+            weight = q[1]
+            total += quantity*weight
+            print(f"{q:2}x {name:12} {quantity*weight:4}$")
+        print("-------------------------")
+        print(f"total package weight {total:>16.2f}")
 
 
 class ProductCreator:           ### product factory useful for scability
@@ -113,17 +120,19 @@ class Cart:
             return True
         else: return False
         
-def receipt(items,total):
+def receipt(items,total,balance):
     print("** Checkout receipt **")
     for item,q in items.items():
         name = item.getName()
         price = item.getPrice()
         print(f"{q:2}x {name:12} {q*price:4}$")
     print("-------------------------")
-    print(f"subtotal {total:>16.2f}")
-    print(f"shipping              30.00")
+    print(f"subtotal {total:>13.2f}")
+    print(f"shipping         30.00")
     total+=30
     print(f"total {total:>16.2f}")
+    print(f"remaining balance {balance}")
+
 
 def checkout(customer,cart):
     total = 0
@@ -138,7 +147,7 @@ def checkout(customer,cart):
         is_phys,w = product.is_physical()
         if is_phys:
             ##add to shipping list
-            shipment[product]= quantity
+            shipment[product]= (quantity,w)
 
     if total == 0:
         print("cart is empty")
@@ -162,10 +171,8 @@ def checkout(customer,cart):
 if __name__=="__main__":
     user=Customer.object.create()
     cheese = Product.object.create()
-    milk=Product.object.create()
     copon=Product.object.create()
     cart=Cart()
     cart.add(cheese,4)
-    cart.add(milk,2)
     cart.add(copon,1)
     checkout(user,cart)
