@@ -10,13 +10,15 @@ class ShippingService:
             quantity = q[0]
             weight = q[1]
             total += quantity*weight
-            print(f"{q:2}x {name:12} {quantity*weight:4}$")
+            print(f"{quantity:2}x {name:12} {quantity*weight:4}Gram")
         print("-------------------------")
         print(f"total package weight {total:>16.2f}")
 
 
 class ProductCreator:           ### product factory useful for scability
-    def create():
+    all = []
+    @classmethod
+    def create(cls):
         print("plese enter following data")
         print("------------------------------------------------")
         name = input("enter name of product : ")
@@ -31,14 +33,14 @@ class ProductCreator:           ### product factory useful for scability
             weight = float(input(f"enter weight of {name} : "))
             is_expiring = input(f"Does {name} have an expiration date? (T/F) : ") == "T"
             if is_expiring:expire_date=input(f"enter expiration date of {name} (ex:2025-08-18)  : ")
-            
-        return Product(name,stock,price,is_phy,is_expiring,weight,expire_date)
 
+        p = Product(name,stock,price,is_phy,is_expiring,weight,expire_date)
+        cls.all.append(p)
+        return p
 
 class CustomerRegister:   ### User factory
     all = []
-
-    @classmethod
+    @classmethod    
     def create(cls):
         print("plese enter following data")
         print("------------------------------------------------")
@@ -158,7 +160,7 @@ def checkout(customer,cart):
         print ("unable to make purchace total is ",total,"\nyour balance is ",balance)
         return
     else:
-        balance = customer.makePurchase(total)
+        balance = customer.makePurchase(total+30)
 
     order = ShippingService()
     order.shipmentNotice(shipment)   
@@ -176,3 +178,4 @@ if __name__=="__main__":
     cart.add(cheese,4)
     cart.add(copon,1)
     checkout(user,cart)
+    print(Product.object.all) #you can access all existing products
